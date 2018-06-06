@@ -1,0 +1,155 @@
+html,
+body {
+    background: #E1E1E1;
+}
+
+#my-nav-bar {
+    background-color: #4A90E2;
+    color: #00408B;
+}
+
+#my-nav-bar a,
+.nav-link {
+    color: #00408B;
+    border-radius: 0;
+}
+
+#my-nav-bar .nav-item .active {
+    color: white;
+    background-color: transparent;
+    border-bottom: 3px solid #00408B;
+}
+
+#add-text-bar {
+    background: #FFFFFF;
+    border: 2px solid #C8C8C8;
+    border-radius: 5px;
+    padding: 0;
+}
+
+.all-content,
+.progress-content,
+.completed-content {
+    background: #F2F2F2;
+    border-radius: 5px 5px 0 0;
+}
+
+/* ----------------------- */
+
+/* Custom checkbox style */
+
+.my-checkbox {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    margin: 0;
+}
+
+/* Hide the browser's default checkbox */
+
+.my-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background: #FFFFFF;
+    border-radius: 2px;
+}
+
+/* On mouse-over, add a grey background color */
+
+.my-checkbox:hover input~.checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+
+.my-checkbox input:checked~.checkmark {
+    background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+
+.my-checkbox input:checked~.checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+
+.my-checkbox .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 7px;
+    height: 12px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+/* -------------------------- */
+
+.edit-icon .far {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.edit-icon .fa-star:hover {
+    color: #F5A623;
+    cursor: pointer;
+}
+
+.edit-icon .fa-pencil-alt:hover {
+    color: #4A90E2;
+    cursor: pointer;
+}
+
+.collapse-cancel {
+    color: #D0021B;
+    background: #FFFFFF;
+    border-right: 0.5px solid #C8C8C8;
+    border-radius: 0 0 0 5px;
+}
+
+.collapse-cancel:hover {
+    color: #FFFFFF;
+    background: #D0021B;
+    border: 0;
+}
+
+.collapse-add {
+    color: #4A90E2;
+    background: #FFFFFF;
+    border-radius: 0 0 5px 0;
+}
+
+.collapse-add:hover {
+    color: #FFFFFF;
+    background: #4A90E2;
+    border: 0;
+}
