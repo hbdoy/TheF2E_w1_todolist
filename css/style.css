@@ -153,3 +153,7 @@ body {
     background: #4A90E2;
     border: 0;
 }
+
+.quick-icon i {
+    cursor: pointer;
+}

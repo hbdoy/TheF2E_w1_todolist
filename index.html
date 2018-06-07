@@ -17,26 +17,30 @@
 <body>
     <ul class="nav nav-pills mb-3 justify-content-center" id="my-nav-bar" role="tablist">
         <li class="nav-item mx-md-5 mx-2">
-            <a class="nav-link active" id="pills-all-tab" data-toggle="pill" href="#pills-all" role="tab" aria-controls="pills-all" aria-selected="true">My Tasks</a>
+            <a class="nav-link active" id="pills-all-tab" data-toggle="pill" href="#pills-all" role="tab" aria-selected="true">My Tasks</a>
+            <!-- <a class="nav-link active" id="pills-all-tab" data-toggle="pill" href="#pills-all" role="tab" aria-controls="pills-all" aria-selected="true">My Tasks</a> -->
         </li>
         <li class="nav-item mx-md-5 mx-2">
-            <a class="nav-link" id="pills-progress-tab" data-toggle="pill" href="#pills-progress" role="tab" aria-controls="pills-progress"
-                aria-selected="false">In Progress</a>
+            <a class="nav-link" id="pills-progress-tab" data-toggle="pill" href="#pills-progress" role="tab" aria-selected="false">In Progress</a>
+            <!-- <a class="nav-link" id="pills-progress-tab" data-toggle="pill" href="#pills-progress" role="tab" aria-controls="pills-progress"
+                aria-selected="false">In Progress</a> -->
         </li>
         <li class="nav-item mx-md-5 mx-2">
-            <a class="nav-link" id="pills-completed-tab" data-toggle="pill" href="#pills-completed" role="tab" aria-controls="pills-completed"
-                aria-selected="false">Completed</a>
+            <a class="nav-link" id="pills-completed-tab" data-toggle="pill" href="#pills-completed" role="tab" aria-selected="false">Completed</a>
+            <!-- <a class="nav-link" id="pills-completed-tab" data-toggle="pill" href="#pills-completed" role="tab" aria-controls="pills-completed"
+                aria-selected="false">Completed</a> -->
         </li>
     </ul>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-6 mb-3">
+            <div class="col-md-8 mb-3">
                 <input type="text" class="form-control p-3" id="add-text-bar" aria-label="Task input" placeholder="+ Add Task">
             </div>
         </div>
-        <div class="tab-content row justify-content-center" id="my-tab-content">
-            <div class="col-md-6 tab-pane fade show active" id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
-                <div class="all-content p-md-3 p-2">
+
+        <div class="tab-content row justify-content-center">
+            <div class="col-md-8 tab-pane fade show active mb-3" id="todo_content" role="tabpanel" aria-labelledby="todo_content">
+                <!-- <div class="all-content p-md-3 p-2">
                     <div class="row">
                         <div class="col-lg-10 col-9">
                             <label class="my-checkbox mr-auto">
@@ -105,23 +109,24 @@
                             Add Task
                         </button>
                     </div>
-                </div>
+                </div> -->
             </div>
 
 
 
 
-            <div class="col-md-6 tab-pane fade" id="pills-progress" role="tabpanel" aria-labelledby="pills-progress-tab">...</div>
-            <div class="col-md-6 tab-pane fade" id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab">...</div>
+            <!-- <div class="col-md-6 tab-pane fade" id="pills-progress" role="tabpanel" aria-labelledby="pills-progress-tab">...</div>
+            <div class="col-md-6 tab-pane fade" id="pills-completed" role="tabpanel" aria-labelledby="pills-completed-tab">...</div> -->
         </div>
     </div>
-
+    <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script src="js/script.js"></script>
 </body>
 
 </html>
