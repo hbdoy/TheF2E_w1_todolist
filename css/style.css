@@ -170,3 +170,8 @@ body {
 .full-star {
     color: #F5A623;
 }
+
+.del-text {
+    color: #9B9B9B;
+    text-decoration: line-through;
+}

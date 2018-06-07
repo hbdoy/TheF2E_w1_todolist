@@ -39,8 +39,8 @@ var get_start = (function () {
             console.log(this.value);
             db.ref("/todo").push({
                 content: this.value,
-                done: false,
-                star: false,
+                done: "no",
+                star: "no",
                 created_time: _DateTimezone(8),
                 update_time: _DateTimezone(8)
             });
@@ -69,12 +69,12 @@ var get_start = (function () {
                     <div class="row">
                         <div class="col-1">
                             <label class="my-checkbox mr-auto">
-                                <input type="checkbox">
+                                <input type="checkbox" data-key="${key}" class="${_checkDoneClass(data[key].done)}" ${_checkDone(data[key].done)}>
                                 <span class="checkmark"></span>
                             </label>
                         </div>
                         <div class="col-lg-9 col-8 pl-lg-0" data-toggle="collapse" data-target="#${key}" aria-expanded="false" style="cursor: pointer">
-                            <div class="text-truncate">${data[key].content || ""}</div>
+                            <div class="text-truncate ${_checkDelText(data[key].done)}">${data[key].content || ""}</div>
                         </div>
                         <div class="col-lg-2 col-3">
                             <div class="edit-icon">
@@ -187,25 +187,36 @@ var get_start = (function () {
                 // star功能
                 if ($(e.target).hasClass("full-star")) {
                     // 已標注>取消
-                    _updateToDo($key, false);
+                    _updateToDo($key, "no");
                 } else {
                     // 未標注>標注
-                    _updateToDo($key, true);
+                    _updateToDo($key, "yes");
                 }
+            }
+        } else if (e.target.nodeName === "INPUT") {
+            var $key = $(e.target)[0].dataset.key;
+            // console.log($(e.target)[0].className);
+            if ($(e.target)[0].className === "todo-not-end"){
+                _updateToDo($key, "", "yes");
+            } else if ($(e.target)[0].className === "todo-end") {
+                _updateToDo($key, "", "no");
             }
         }
     }
 
-    function _updateToDo(key, star) {
-        var $tmp = $("#" + key + " form")[0];
+    function _updateToDo(mykey, mystar, mydone) {
+        var $tmp = $("#" + mykey + " form")[0];
+        mystar = mystar || tmpToDo[mykey].star;
+        mydone = mydone || tmpToDo[mykey].done;
         // title不能修改為空
         if ($tmp[0].value != "") {
-            db.ref("/todo/" + key).update({
+            db.ref("/todo/" + mykey).update({
                 content: $tmp[0].value,
                 dead_date: $tmp[1].value,
                 dead_time: $tmp[2].value,
                 comment: $tmp[4].value,
-                star: star,
+                star: mystar,
+                done: mydone,
                 update_time: _DateTimezone(8)
             });
         } else {
@@ -229,17 +240,41 @@ var get_start = (function () {
     }
 
     function _checkStarOuter(data) {
-        if (data) {
+        if (data === "yes") {
             return "todo-star";
         }
         return "";
     }
 
     function _checkStarIcon(data) {
-        if (data) {
+        if (data === "yes") {
             return "fas full-star";
         } else {
             return "far";
+        }
+    }
+
+    function _checkDoneClass(data) {
+        if (data === "yes") {
+            return "todo-end";
+        } else {
+            return "todo-not-end";
+        }
+    }
+
+    function _checkDone(data) {
+        if (data === "yes") {
+            return "checked";
+        } else {
+            return "";
+        }
+    }
+
+    function _checkDelText(data) {
+        if (data === "yes") {
+            return "del-text";
+        } else {
+            return "";
         }
     }
 
