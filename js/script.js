@@ -39,7 +39,6 @@ var get_start = (function () {
             console.log(this.value);
             db.ref("/todo").push({
                 content: this.value,
-                comment: "",
                 done: false,
                 created_time: _DateTimezone(8),
                 update_time: _DateTimezone(8)
@@ -74,7 +73,7 @@ var get_start = (function () {
                             </label>
                         </div>
                         <div class="col-lg-9 col-8 pl-lg-0" data-toggle="collapse" data-target="#${key}" aria-expanded="false" style="cursor: pointer">
-                            <div class="text-truncate">${data[key].content}</div>
+                            <div class="text-truncate">${data[key].content || ""}</div>
                         </div>
                         <div class="col-lg-2 col-3">
                             <div class="edit-icon">
@@ -104,7 +103,7 @@ var get_start = (function () {
                                     Title
                                 </div>
                                 <div class="mx-4">
-                                    <input type="text" class="form-control" value="${data[key].content}">
+                                    <textarea class="form-control" rows="3">${data[key].content || ""}</textarea>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -114,10 +113,10 @@ var get_start = (function () {
                                 </div>
                                 <div class="row mx-4">
                                     <div class="col-6 pl-0">
-                                        <input type="date" class="form-control">
+                                        <input type="date" class="form-control" value="${data[key].dead_date || ''}">
                                     </div>
                                     <div class="col-6 pr-0">
-                                        <input type="time" class="form-control" pattern="[0-9]{2}:[0-9]{2}">
+                                        <input type="time" class="form-control" value="${data[key].dead_time || ''}" pattern="[0-9]{2}:[0-9]{2}">
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +135,7 @@ var get_start = (function () {
                                     Comment
                                 </div>
                                 <div class="mx-4">
-                                    <textarea class="form-control" rows="3">${data[key].comment}</textarea>
+                                    <textarea class="form-control" rows="3">${data[key].comment || ""}</textarea>
                                 </div>
                             </div>
                         </form>
@@ -170,7 +169,9 @@ var get_start = (function () {
                 var $key = $(e.target)[0].dataset.key;
                 // 此處[0]對應到表格
                 // 再接下來[0]~[4]依序為各input
-                // console.log($("#" + key + " form")[0][4].value);
+                // for(let i = 0; i < 5; i++){
+                //     console.log($("#" + $key + " form")[0][i].value);
+                // }
                 if (confirm("確定要保存更改嗎?")) {
                     _updateToDo($key);
                 }
@@ -186,11 +187,18 @@ var get_start = (function () {
 
     function _updateToDo(key) {
         var $tmp = $("#" + key + " form")[0];
-        db.ref("/todo/" + key).update({
-            content: $tmp[0].value,
-            comment: $tmp[4].value,
-            update_time: _DateTimezone(8)
-        });
+        // title不能修改為空
+        if ($tmp[0].value != ""){
+            db.ref("/todo/" + key).update({
+                content: $tmp[0].value,
+                dead_date: $tmp[1].value,
+                dead_time: $tmp[2].value,
+                comment: $tmp[4].value,
+                update_time: _DateTimezone(8)
+            });
+        }else {
+            alert("標題不能為空");
+        }
     }
 
     function init() {
