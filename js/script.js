@@ -9,6 +9,7 @@ var get_start = (function () {
     var completedToDo = {};
     var nowPage = "all";
     var todoLen = {
+        all: 0,
         progress: 0,
         completed: 0
     };
@@ -25,6 +26,7 @@ var get_start = (function () {
     firebase.initializeApp(config);
     var db = firebase.database();
 
+    // 資料即時更新,更新後先將資料分類
     function _getData() {
         db.ref('/todo').on('value', function (snapshot) {
             var data = snapshot.val();
@@ -80,9 +82,15 @@ var get_start = (function () {
         // _DateTimezone(8)
     }
 
+    // 此函數在資料更新時,負責data的分類,讓後續router不用再過濾要渲染的data
     function _filterToDo(){
         progressToDo = {},
         completedToDo = {};
+        todoLen = {
+            all: 0,
+            progress: 0,
+            completed: 0
+        };
         for (let key in allToDo) {
             if (allToDo[key].done === "no") {
                 progressToDo[key] = allToDo[key];
@@ -92,9 +100,11 @@ var get_start = (function () {
                 todoLen.completed++;
             }
         }
+        todoLen.all = todoLen.progress + todoLen.completed;
         _updatePage();
     }
 
+    // 此函數負責router,將當前頁面需要渲染的data傳給_createPageStr()
     function _updatePage() {
         if (nowPage === "all") {
             _createPageStr(allToDo);
@@ -105,6 +115,7 @@ var get_start = (function () {
         }
     }
 
+    // 將得到的data渲染到頁面
     function _createPageStr(data) {
         var str = "";
         for (let key in data) {
@@ -226,6 +237,16 @@ var get_start = (function () {
             var $key = $(e.target)[0].dataset.key;
             if ($(e.target).hasClass("fa-trash")) {
                 if (confirm("確定要刪除嗎?")) {
+                    // 修復資料刪光時,db.on不會更新資料,造成畫面上還有最後一則刪不掉的todo(但DB已刪)
+                    todoLen.all--;
+                    if(todoLen.all == 0){
+                        // console.log("zero")
+                        allToDo = {},
+                        progressToDo = {},
+                        completedToDo = {};
+                        todo_content.innerHTML = "";
+                    }
+                    // console.log(todoLen.all);
                     db.ref("/todo/" + $(e.target)[0].dataset.key).remove();
                 }
             } else if ($(e.target).hasClass("fa-star")) {
@@ -242,8 +263,10 @@ var get_start = (function () {
             var $key = $(e.target)[0].dataset.key;
             // console.log($(e.target)[0].className);
             if ($(e.target)[0].className === "todo-not-end") {
+                // 未完成>完成
                 _updateToDo($key, "", "yes");
             } else if ($(e.target)[0].className === "todo-end") {
+                // 完成>未完成
                 _updateToDo($key, "", "no");
             }
         }
