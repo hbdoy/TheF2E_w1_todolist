@@ -4,8 +4,14 @@ var get_start = (function () {
     var page_progress = document.querySelector("#pills-progress-tab");
     var page_completed = document.querySelector("#pills-completed-tab");
     var todo_content = document.querySelector("#todo_content");
-    var tmpToDo = {};
+    var allToDo = {};
+    var progressToDo = {};
+    var completedToDo = {};
     var nowPage = "all";
+    var todoLen = {
+        progress: 0,
+        completed: 0
+    };
 
     // Initialize Firebase
     var config = {
@@ -24,8 +30,8 @@ var get_start = (function () {
             var data = snapshot.val();
             if (data) {
                 console.log(data);
-                tmpToDo = data;
-                _updatePage();
+                allToDo = data;
+                _filterToDo();
             }
         });
     }
@@ -74,24 +80,28 @@ var get_start = (function () {
         // _DateTimezone(8)
     }
 
+    function _filterToDo(){
+        progressToDo = {},
+        completedToDo = {};
+        for (let key in allToDo) {
+            if (allToDo[key].done === "no") {
+                progressToDo[key] = allToDo[key];
+                todoLen.progress++;
+            } else if (allToDo[key].done === "yes") {
+                completedToDo[key] = allToDo[key];
+                todoLen.completed++;
+            }
+        }
+        _updatePage();
+    }
+
     function _updatePage() {
-        var tmp = {};
         if (nowPage === "all") {
-            _createPageStr(tmpToDo);
+            _createPageStr(allToDo);
         } else if (nowPage === "progress") {
-            for (let key in tmpToDo) {
-                if (tmpToDo[key].done === "no") {
-                    tmp[key] = tmpToDo[key];
-                }
-            }
-            _createPageStr(tmp);
+            _createPageStr(progressToDo);
         } else if (nowPage === "completed") {
-            for (let key in tmpToDo) {
-                if (tmpToDo[key].done === "yes") {
-                    tmp[key] = tmpToDo[key];
-                }
-            }
-            _createPageStr(tmp);
+            _createPageStr(completedToDo);
         }
     }
 
@@ -241,8 +251,8 @@ var get_start = (function () {
 
     function _updateToDo(mykey, mystar, mydone) {
         var $tmp = $("#" + mykey + " form")[0];
-        mystar = mystar || tmpToDo[mykey].star;
-        mydone = mydone || tmpToDo[mykey].done;
+        mystar = mystar || allToDo[mykey].star;
+        mydone = mydone || allToDo[mykey].done;
         // title不能修改為空
         if ($tmp[0].value != "") {
             db.ref("/todo/" + mykey).update({
