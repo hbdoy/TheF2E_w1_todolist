@@ -119,13 +119,18 @@ body {
     user-select: none;
 }
 
-.edit-icon .fa-star:hover {
+.fa-star:hover {
     color: #F5A623;
     cursor: pointer;
 }
 
-.edit-icon .fa-pencil-alt:hover {
+.fa-pencil-alt:hover {
     color: #4A90E2;
+    cursor: pointer;
+}
+
+.fa-trash:hover {
+    color: #D0021B;
     cursor: pointer;
 }
 
@@ -154,6 +159,6 @@ body {
     border: 0;
 }
 
-.quick-icon i {
+.quick-icon i{
     cursor: pointer;
 }
