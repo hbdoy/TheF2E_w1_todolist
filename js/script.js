@@ -83,9 +83,9 @@ var get_start = (function () {
     }
 
     // 此函數在資料更新時,負責data的分類,讓後續router不用再過濾要渲染的data
-    function _filterToDo(){
+    function _filterToDo() {
         progressToDo = {},
-        completedToDo = {};
+            completedToDo = {};
         todoLen = {
             all: 0,
             progress: 0,
@@ -209,9 +209,30 @@ var get_start = (function () {
                         </div>
                     </div>
                 </div>
-            `;
-        }
+                `;
+            }
+            str += `<div class="px-3 len-text">${_checkLenText()}</div>`;
         todo_content.innerHTML = str;
+    }
+
+    function _checkLenText() {
+        if (nowPage === "all" || nowPage === "progress") {
+            if (todoLen.progress == 1) {
+                return `${todoLen.progress} task left`;
+            } else if (todoLen.progress == 0) {
+                return "";
+            } else {
+                return `${todoLen.progress} tasks left`;
+            }
+        } else if (nowPage === "completed") {
+            if (todoLen.completed == 1) {
+                return `${todoLen.completed} task completed`;
+            } else if (todoLen.completed == 0) {
+                return "";
+            } else {
+                return `${todoLen.completed} tasks completed`;
+            }
+        }
     }
 
     function _checkForAction(e) {
@@ -239,11 +260,11 @@ var get_start = (function () {
                 if (confirm("確定要刪除嗎?")) {
                     // 修復資料刪光時,db.on不會更新資料,造成畫面上還有最後一則刪不掉的todo(但DB已刪)
                     todoLen.all--;
-                    if(todoLen.all == 0){
+                    if (todoLen.all == 0) {
                         // console.log("zero")
                         allToDo = {},
-                        progressToDo = {},
-                        completedToDo = {};
+                            progressToDo = {},
+                            completedToDo = {};
                         todo_content.innerHTML = "";
                     }
                     // console.log(todoLen.all);
@@ -349,7 +370,7 @@ var get_start = (function () {
     function init() {
         _getData();
         _eventBind();
-        console.log("init");
+        // console.log("init");
     }
 
     return {
