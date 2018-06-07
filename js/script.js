@@ -40,6 +40,7 @@ var get_start = (function () {
             db.ref("/todo").push({
                 content: this.value,
                 done: false,
+                star: false,
                 created_time: _DateTimezone(8),
                 update_time: _DateTimezone(8)
             });
@@ -64,7 +65,7 @@ var get_start = (function () {
         for (let key in data) {
             str += `
             <div class="mb-2">
-                <div class="all-content p-md-3 py-3 px-1">
+                <div class="all-content p-md-3 py-3 px-1 ${_checkStarOuter(data[key].star)}">
                     <div class="row">
                         <div class="col-1">
                             <label class="my-checkbox mr-auto">
@@ -77,7 +78,7 @@ var get_start = (function () {
                         </div>
                         <div class="col-lg-2 col-3">
                             <div class="edit-icon">
-                                <i class="far fa-star mr-3"></i>
+                                <i class="${_checkStarIcon(data[key].star)} fa-star mr-3" data-key="${key}"></i>
                                 <i class="fas fa-pencil-alt mr-lg-3" data-toggle="collapse" data-target="#${key}" aria-expanded="false"></i>
                                 <i class="fas fa-trash d-none d-lg-inline-block" data-key="${key}"></i>
                             </div>
@@ -176,32 +177,43 @@ var get_start = (function () {
                     _updateToDo($key);
                 }
             }
-        } else if (e.target.nodeName === "I"){
+        } else if (e.target.nodeName === "I") {
+            var $key = $(e.target)[0].dataset.key;
             if ($(e.target).hasClass("fa-trash")) {
                 if (confirm("確定要刪除嗎?")) {
                     db.ref("/todo/" + $(e.target)[0].dataset.key).remove();
+                }
+            } else if ($(e.target).hasClass("fa-star")) {
+                // star功能
+                if ($(e.target).hasClass("full-star")) {
+                    // 已標注>取消
+                    _updateToDo($key, false);
+                } else {
+                    // 未標注>標注
+                    _updateToDo($key, true);
                 }
             }
         }
     }
 
-    function _updateToDo(key) {
+    function _updateToDo(key, star) {
         var $tmp = $("#" + key + " form")[0];
         // title不能修改為空
-        if ($tmp[0].value != ""){
+        if ($tmp[0].value != "") {
             db.ref("/todo/" + key).update({
                 content: $tmp[0].value,
                 dead_date: $tmp[1].value,
                 dead_time: $tmp[2].value,
                 comment: $tmp[4].value,
+                star: star,
                 update_time: _DateTimezone(8)
             });
-        }else {
+        } else {
             alert("標題不能為空");
         }
     }
 
-    function _checkDeadDate(date){
+    function _checkDeadDate(date) {
         if (date) {
             // 2018-06-08 取第五個index後的所有字元來去掉2018-
             return `<span class="mr-2"><i class="far fa-calendar-alt"></i> ${date.substr(5)}</span>`;
@@ -209,11 +221,26 @@ var get_start = (function () {
         return "";
     }
 
-    function _checkComment(date){
+    function _checkComment(date) {
         if (date) {
             return `<i class="far fa-comment-dots"></i>`;
         }
         return "";
+    }
+
+    function _checkStarOuter(data) {
+        if (data) {
+            return "todo-star";
+        }
+        return "";
+    }
+
+    function _checkStarIcon(data) {
+        if (data) {
+            return "fas full-star";
+        } else {
+            return "far";
+        }
     }
 
     function init() {

@@ -159,6 +159,14 @@ body {
     border: 0;
 }
 
-.quick-icon i{
+.quick-icon i {
     cursor: pointer;
+}
+
+.todo-star {
+    background: #FFF2DC;
+}
+
+.full-star {
+    color: #F5A623;
 }
