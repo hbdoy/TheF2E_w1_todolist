@@ -85,9 +85,9 @@ var get_start = (function () {
                     </div>
                     <div class="row quick-icon mt-2 ml-4">
                         <div class="col-10" data-toggle="collapse" data-target="#${key}" aria-expanded="false">
-                            <i class="far fa-calendar-alt mr-2"></i>
+                            ${_checkDeadDate(data[key].dead_date)}
                             <i class="far fa-file mr-2"></i>
-                            <i class="far fa-comment-dots"></i>
+                            ${_checkComment(data[key].comment)}
                         </div>
                         <div class="col-2">
                             <i class="fas fa-trash d-inline-block d-lg-none" data-key="${key}"></i>
@@ -199,6 +199,21 @@ var get_start = (function () {
         }else {
             alert("標題不能為空");
         }
+    }
+
+    function _checkDeadDate(date){
+        if (date) {
+            // 2018-06-08 取第五個index後的所有字元來去掉2018-
+            return `<span class="mr-2"><i class="far fa-calendar-alt"></i> ${date.substr(5)}</span>`;
+        }
+        return "";
+    }
+
+    function _checkComment(date){
+        if (date) {
+            return `<i class="far fa-comment-dots"></i>`;
+        }
+        return "";
     }
 
     function init() {
