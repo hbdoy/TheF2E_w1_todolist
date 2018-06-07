@@ -1,10 +1,11 @@
 var get_start = (function () {
     var newToDo = document.querySelector("#add-text-bar");
-    var page_all = document.querySelector("#pills-all");
-    var page_progress = document.querySelector("#pills-progress");
-    var page_completed = document.querySelector("#pills-completed");
+    var page_all = document.querySelector("#pills-all-tab");
+    var page_progress = document.querySelector("#pills-progress-tab");
+    var page_completed = document.querySelector("#pills-completed-tab");
     var todo_content = document.querySelector("#todo_content");
     var tmpToDo = {};
+    var nowPage = "all";
 
     // Initialize Firebase
     var config = {
@@ -24,7 +25,7 @@ var get_start = (function () {
             if (data) {
                 console.log(data);
                 tmpToDo = data;
-                _updatePage(data);
+                _updatePage();
             }
         });
     }
@@ -32,6 +33,18 @@ var get_start = (function () {
     function _eventBind() {
         newToDo.addEventListener("keydown", _addNewTodo);
         todo_content.addEventListener("click", _checkForAction);
+        page_all.addEventListener("click", () => {
+            nowPage = "all";
+            _updatePage()
+        });
+        page_progress.addEventListener("click", () => {
+            nowPage = "progress";
+            _updatePage()
+        });
+        page_completed.addEventListener("click", () => {
+            nowPage = "completed";
+            _updatePage()
+        });
     }
 
     function _addNewTodo(e) {
@@ -39,6 +52,7 @@ var get_start = (function () {
             console.log(this.value);
             db.ref("/todo").push({
                 content: this.value,
+                comment: "",
                 done: "no",
                 star: "no",
                 created_time: _DateTimezone(8),
@@ -60,99 +74,120 @@ var get_start = (function () {
         // _DateTimezone(8)
     }
 
-    function _updatePage(data) {
+    function _updatePage() {
+        var tmp = {};
+        if (nowPage === "all") {
+            _createPageStr(tmpToDo);
+        } else if (nowPage === "progress") {
+            for (let key in tmpToDo) {
+                if (tmpToDo[key].done === "no") {
+                    tmp[key] = tmpToDo[key];
+                }
+            }
+            _createPageStr(tmp);
+        } else if (nowPage === "completed") {
+            for (let key in tmpToDo) {
+                if (tmpToDo[key].done === "yes") {
+                    tmp[key] = tmpToDo[key];
+                }
+            }
+            _createPageStr(tmp);
+        }
+    }
+
+    function _createPageStr(data) {
         var str = "";
         for (let key in data) {
             str += `
-            <div class="mb-2">
-                <div class="all-content p-md-3 py-3 px-1 ${_checkStarOuter(data[key].star)}">
-                    <div class="row">
-                        <div class="col-1">
-                            <label class="my-checkbox mr-auto">
-                                <input type="checkbox" data-key="${key}" class="${_checkDoneClass(data[key].done)}" ${_checkDone(data[key].done)}>
-                                <span class="checkmark"></span>
-                            </label>
+                <div class="mb-2">
+                    <div class="all-content p-md-3 py-3 px-1 ${_checkStarOuter(data[key].star)}">
+                        <div class="row">
+                            <div class="col-1">
+                                <label class="my-checkbox mr-auto">
+                                    <input type="checkbox" data-key="${key}" class="${_checkDoneClass(data[key].done)}" ${_checkDone(data[key].done)}>
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+                            <div class="col-lg-9 col-8 pl-lg-0" data-toggle="collapse" data-target="#${key}" aria-expanded="false" style="cursor: pointer">
+                                <div class="text-truncate ${_checkDelText(data[key].done)}">${data[key].content || ""}</div>
+                            </div>
+                            <div class="col-lg-2 col-3">
+                                <div class="edit-icon">
+                                    <i class="${_checkStarIcon(data[key].star)} fa-star mr-3" data-key="${key}"></i>
+                                    <i class="fas fa-pencil-alt mr-lg-3" data-toggle="collapse" data-target="#${key}" aria-expanded="false"></i>
+                                    <i class="fas fa-trash d-none d-lg-inline-block" data-key="${key}"></i>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-lg-9 col-8 pl-lg-0" data-toggle="collapse" data-target="#${key}" aria-expanded="false" style="cursor: pointer">
-                            <div class="text-truncate ${_checkDelText(data[key].done)}">${data[key].content || ""}</div>
-                        </div>
-                        <div class="col-lg-2 col-3">
-                            <div class="edit-icon">
-                                <i class="${_checkStarIcon(data[key].star)} fa-star mr-3" data-key="${key}"></i>
-                                <i class="fas fa-pencil-alt mr-lg-3" data-toggle="collapse" data-target="#${key}" aria-expanded="false"></i>
-                                <i class="fas fa-trash d-none d-lg-inline-block" data-key="${key}"></i>
+                        <div class="row quick-icon mt-2 ml-4">
+                            <div class="col-10" data-toggle="collapse" data-target="#${key}" aria-expanded="false">
+                                ${_checkDeadDate(data[key].dead_date)}
+                                <i class="far fa-file mr-2"></i>
+                                ${_checkComment(data[key].comment)}
+                            </div>
+                            <div class="col-2">
+                                <i class="fas fa-trash d-inline-block d-lg-none" data-key="${key}"></i>
                             </div>
                         </div>
                     </div>
-                    <div class="row quick-icon mt-2 ml-4">
-                        <div class="col-10" data-toggle="collapse" data-target="#${key}" aria-expanded="false">
-                            ${_checkDeadDate(data[key].dead_date)}
-                            <i class="far fa-file mr-2"></i>
-                            ${_checkComment(data[key].comment)}
+                    <div class="collapse mb-3" id="${key}">
+                        <div class="px-4 py-3" style="border: 0;border-top: 2px solid #C8C8C8;background: #F2F2F2;">
+                            <form>
+                                <div class="form-group">
+                                    <div class="m-2">
+                                        <i class="far fa-clipboard mr-1"></i>
+                                        Title
+                                    </div>
+                                    <div class="mx-4">
+                                        <textarea class="form-control" rows="3">${data[key].content || ""}</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="m-2">
+                                        <i class="far fa-calendar-alt mr-1"></i>
+                                        Deadline
+                                    </div>
+                                    <div class="row mx-4">
+                                        <div class="col-6 pl-0">
+                                            <input type="date" class="form-control" value="${data[key].dead_date || ''}">
+                                        </div>
+                                        <div class="col-6 pr-0">
+                                            <input type="time" class="form-control" value="${data[key].dead_time || ''}" pattern="[0-9]{2}:[0-9]{2}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="m-2">
+                                        <i class="far fa-file mr-1"></i>
+                                        File
+                                    </div>
+                                    <div class="mx-4">
+                                        <input type="file" class="form-control-file">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="m-2">
+                                        <i class="far fa-comment-dots mr-1"></i>
+                                        Comment
+                                    </div>
+                                    <div class="mx-4">
+                                        <textarea class="form-control" rows="3">${data[key].comment || ""}</textarea>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
-                        <div class="col-2">
-                            <i class="fas fa-trash d-inline-block d-lg-none" data-key="${key}"></i>
+                        <div class="d-flex justify-content-start">
+                            <button type="button" class="collapse-cancel btn btn-block">
+                                <i class="fas fa-times mr-1"></i>
+                                Cancel
+                            </button>
+                            <button type="button" class="collapse-add btn btn-block m-0" data-key=${key}>
+                                <i class="fas fa-plus mr-1"></i>
+                                Add Task
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="collapse mb-3" id="${key}">
-                    <div class="px-4 py-3" style="border: 0;border-top: 2px solid #C8C8C8;background: #F2F2F2;">
-                        <form>
-                            <div class="form-group">
-                                <div class="m-2">
-                                    <i class="far fa-clipboard mr-1"></i>
-                                    Title
-                                </div>
-                                <div class="mx-4">
-                                    <textarea class="form-control" rows="3">${data[key].content || ""}</textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="m-2">
-                                    <i class="far fa-calendar-alt mr-1"></i>
-                                    Deadline
-                                </div>
-                                <div class="row mx-4">
-                                    <div class="col-6 pl-0">
-                                        <input type="date" class="form-control" value="${data[key].dead_date || ''}">
-                                    </div>
-                                    <div class="col-6 pr-0">
-                                        <input type="time" class="form-control" value="${data[key].dead_time || ''}" pattern="[0-9]{2}:[0-9]{2}">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="m-2">
-                                    <i class="far fa-file mr-1"></i>
-                                    File
-                                </div>
-                                <div class="mx-4">
-                                    <input type="file" class="form-control-file">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="m-2">
-                                    <i class="far fa-comment-dots mr-1"></i>
-                                    Comment
-                                </div>
-                                <div class="mx-4">
-                                    <textarea class="form-control" rows="3">${data[key].comment || ""}</textarea>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="d-flex justify-content-start">
-                        <button type="button" class="collapse-cancel btn btn-block">
-                            <i class="fas fa-times mr-1"></i>
-                            Cancel
-                        </button>
-                        <button type="button" class="collapse-add btn btn-block m-0" data-key=${key}>
-                            <i class="fas fa-plus mr-1"></i>
-                            Add Task
-                        </button>
-                    </div>
-                </div>
-            </div>
             `;
         }
         todo_content.innerHTML = str;
@@ -162,7 +197,7 @@ var get_start = (function () {
         if (e.target.nodeName === "BUTTON") {
             if ($(e.target).hasClass("collapse-cancel")) {
                 if (confirm("確定要取消編輯嗎?")) {
-                    _updatePage(tmpToDo);
+                    _updatePage();
                 }
             } else if ($(e.target).hasClass("collapse-add")) {
                 // 大雷 要加[0]才能取到資料
@@ -196,7 +231,7 @@ var get_start = (function () {
         } else if (e.target.nodeName === "INPUT") {
             var $key = $(e.target)[0].dataset.key;
             // console.log($(e.target)[0].className);
-            if ($(e.target)[0].className === "todo-not-end"){
+            if ($(e.target)[0].className === "todo-not-end") {
                 _updateToDo($key, "", "yes");
             } else if ($(e.target)[0].className === "todo-end") {
                 _updateToDo($key, "", "no");
@@ -212,11 +247,11 @@ var get_start = (function () {
         if ($tmp[0].value != "") {
             db.ref("/todo/" + mykey).update({
                 content: $tmp[0].value,
-                dead_date: $tmp[1].value,
-                dead_time: $tmp[2].value,
                 comment: $tmp[4].value,
                 star: mystar,
                 done: mydone,
+                dead_date: $tmp[1].value,
+                dead_time: $tmp[2].value,
                 update_time: _DateTimezone(8)
             });
         } else {
