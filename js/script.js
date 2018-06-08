@@ -215,8 +215,8 @@ var get_start = (function () {
                     </div>
                 </div>
                 `;
-            }
-            str += `<div class="px-3 len-text">${_checkLenText()}</div>`;
+        }
+        str += `<div class="px-3 len-text">${_checkLenText()}</div>`;
         todo_content.innerHTML = str;
     }
 
@@ -243,9 +243,22 @@ var get_start = (function () {
     function _checkForAction(e) {
         if (e.target.nodeName === "BUTTON") {
             if ($(e.target).hasClass("collapse-cancel")) {
-                if (confirm("確定要取消編輯嗎?")) {
-                    _updatePage();
-                }
+                Ply.dialog("confirm", {
+                    effect: ["slide", "scale"]
+                    }, {
+                        text: "確定要取消編輯嗎?",
+                        ok: "Yes",
+                        cancel: "No"
+                    })
+                    .always(function (ui) {
+                        if (ui.state) {
+                            // Clicked "OK"
+                            _updatePage();
+                        }
+                    });
+                // if (confirm("確定要取消編輯嗎?")) {
+                //     _updatePage();
+                // }
             } else if ($(e.target).hasClass("collapse-add")) {
                 // 大雷 要加[0]才能取到資料
                 // console.log($(e.target)[0].dataset.key);
@@ -255,9 +268,25 @@ var get_start = (function () {
                 // for(let i = 0; i < 5; i++){
                 //     console.log($("#" + $key + " form")[0][i].value);
                 // }
-                if (confirm("確定要保存更改嗎?")) {
-                    _updateToDo($key);
-                }
+                Ply.dialog("confirm", {
+                    effect: ["fall", "scale"]
+                    }, {
+                        text: "確定要保存更改嗎?",
+                        ok: "Save",
+                        cancel: "cancel"
+                    }, {
+                        opacity: 0,
+                        backgroundColor: "red"
+                    })
+                    .always(function (ui) {
+                        if (ui.state) {
+                            // Clicked "OK"
+                            _updateToDo($key);
+                        }
+                    });
+                // if (confirm("確定要保存更改嗎?")) {
+                //     _updateToDo($key);
+                // }
             }
         } else if (e.target.nodeName === "I") {
             var $key = $(e.target)[0].dataset.key;
