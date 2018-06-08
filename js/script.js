@@ -174,10 +174,10 @@ var get_start = (function () {
                                         Deadline
                                     </div>
                                     <div class="row mx-4">
-                                        <div class="col-6 pl-0">
-                                            <input type="date" class="form-control" value="${data[key].dead_date || ''}">
+                                        <div class="col-md-6 pl-md-0 mb-md-0 mb-3">
+                                            <input type="date" class="form-control d-none" value="${data[key].dead_date || ''}">
                                         </div>
-                                        <div class="col-6 pr-0">
+                                        <div class="col-md-6 pr-md-0">
                                             <input type="time" class="form-control" value="${data[key].dead_time || ''}" pattern="[0-9]{2}:[0-9]{2}">
                                         </div>
                                     </div>
