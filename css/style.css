@@ -63,7 +63,7 @@ body {
 .checkmark {
     position: absolute;
     top: 0;
-    left: 0;
+    left: 10px;
     height: 25px;
     width: 25px;
     background: #FFFFFF;
@@ -178,4 +178,15 @@ body {
 
 .len-text {
     color: #C8C8C8;
+}
+
+/* for draggable */
+
+.my-handle {
+    cursor: move;
+    cursor: -webkit-grabbing;
+}
+
+.ghost {
+    opacity: 0.4;
 }

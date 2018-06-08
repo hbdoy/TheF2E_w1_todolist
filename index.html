@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ToDoList</title>
     <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
@@ -16,16 +16,16 @@
 
 <body>
     <ul class="nav nav-pills mb-3 justify-content-center" id="my-nav-bar" role="tablist">
-        <li class="nav-item mx-md-5 mx-2">
+        <li class="nav-item mx-md-5">
             <a class="nav-link active" id="pills-all-tab" data-toggle="pill" href="#pills-all" role="tab" aria-selected="true">My Tasks</a>
             <!-- <a class="nav-link active" id="pills-all-tab" data-toggle="pill" href="#pills-all" role="tab" aria-controls="pills-all" aria-selected="true">My Tasks</a> -->
         </li>
-        <li class="nav-item mx-md-5 mx-2">
+        <li class="nav-item mx-md-5">
             <a class="nav-link" id="pills-progress-tab" data-toggle="pill" href="#pills-progress" role="tab" aria-selected="false">In Progress</a>
             <!-- <a class="nav-link" id="pills-progress-tab" data-toggle="pill" href="#pills-progress" role="tab" aria-controls="pills-progress"
                 aria-selected="false">In Progress</a> -->
         </li>
-        <li class="nav-item mx-md-5 mx-2">
+        <li class="nav-item mx-md-5">
             <a class="nav-link" id="pills-completed-tab" data-toggle="pill" href="#pills-completed" role="tab" aria-selected="false">Completed</a>
             <!-- <a class="nav-link" id="pills-completed-tab" data-toggle="pill" href="#pills-completed" role="tab" aria-controls="pills-completed"
                 aria-selected="false">Completed</a> -->
@@ -126,6 +126,7 @@
         crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+    <script src="js/Sortable.js"></script>
     <script src="js/script.js"></script>
     <script>
         $(document).ready(function () {

@@ -41,6 +41,10 @@ var get_start = (function () {
     function _eventBind() {
         newToDo.addEventListener("keydown", _addNewTodo);
         todo_content.addEventListener("click", _checkForAction);
+        Sortable.create(todo_content, {
+            handle: '.my-handle',
+            ghostClass: 'ghost'
+        });
         page_all.addEventListener("click", () => {
             nowPage = "all";
             _updatePage()
@@ -123,13 +127,14 @@ var get_start = (function () {
                 <div class="mb-2">
                     <div class="all-content p-md-3 py-3 px-1 ${_checkStarOuter(data[key].star)}">
                         <div class="row">
-                            <div class="col-1">
-                                <label class="my-checkbox mr-auto">
+                            <div class="col-lg-1 col-2 d-flex justify-content-start">
+                                <span class="my-handle">☰</span>
+                                <label class="my-checkbox">
                                     <input type="checkbox" data-key="${key}" class="${_checkDoneClass(data[key].done)}" ${_checkDone(data[key].done)}>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
-                            <div class="col-lg-9 col-8 pl-lg-0" data-toggle="collapse" data-target="#${key}" aria-expanded="false" style="cursor: pointer">
+                            <div class="col-lg-9 col-7 " data-toggle="collapse" data-target="#${key}" aria-expanded="false" style="cursor: pointer">
                                 <div class="text-truncate ${_checkDelText(data[key].done)}">${data[key].content || ""}</div>
                             </div>
                             <div class="col-lg-2 col-3">
