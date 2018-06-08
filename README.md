@@ -1,4 +1,7 @@
 # TheF2E_w1_todolist
+更多關於 TheF2E 挑戰的資訊及其他週作品
+
+https://github.com/hbdoy/TheF2E
 
 ## View
 https://hbdoy.github.io/TheF2E_w1_todolist/
