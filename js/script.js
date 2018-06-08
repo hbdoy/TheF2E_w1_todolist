@@ -31,7 +31,7 @@ var get_start = (function () {
         db.ref('/todo').on('value', function (snapshot) {
             var data = snapshot.val();
             if (data) {
-                console.log(data);
+                // console.log(data);
                 allToDo = data;
                 _filterToDo();
             }
@@ -61,7 +61,7 @@ var get_start = (function () {
 
     function _addNewTodo(e) {
         if (e.keyCode == 13 && this.value != "") {
-            console.log(this.value);
+            // console.log(this.value);
             db.ref("/todo").push({
                 content: this.value,
                 comment: "",
