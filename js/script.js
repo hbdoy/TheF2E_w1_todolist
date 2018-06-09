@@ -53,13 +53,11 @@ var get_start = (function () {
         todo_content.addEventListener("click", _checkForAction);
         // 拖曳事件結束後觸發_saveDataSort
         var sortable = new Sortable(todo_content, {
+            handle: '.my-handle',
+            ghostClass: 'ghost',
             onEnd: function () {
                 _saveDataSort();
             },
-        });
-        Sortable.create(todo_content, {
-            handle: '.my-handle',
-            ghostClass: 'ghost'
         });
         page_all.addEventListener("click", () => {
             nowPage = "all";
