@@ -6,6 +6,12 @@ https://github.com/hbdoy/TheF2E
 ## View
 https://hbdoy.github.io/TheF2E_w1_todolist/
 
+![](https://i.imgur.com/CU5ipE8.png)
+
+RWD是一定要der
+
+![](https://i.imgur.com/qbT570E.png)
+
 ## 說明
 連續九週挑戰的第一關，其實沒有很意外的是 ToDoList，每當學新的語言/框架，總是拿它鍊手，這樣說起來它的地位似乎不亞於 **hello world** 喔XD
 
