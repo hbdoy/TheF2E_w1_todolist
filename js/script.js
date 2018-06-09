@@ -205,7 +205,7 @@ var get_start = (function () {
                                     </div>
                                     <div class="row mx-4">
                                         <div class="col-md-6 pl-md-0 mb-md-0 mb-3">
-                                            <input type="date" class="form-control d-none" value="${data[i].dead_date || ''}">
+                                            <input type="date" class="form-control value="${data[i].dead_date || ''}">
                                         </div>
                                         <div class="col-md-6 pr-md-0">
                                             <input type="time" class="form-control" value="${data[i].dead_time || ''}" pattern="[0-9]{2}:[0-9]{2}">
