@@ -5,14 +5,16 @@ var get_start = (function () {
     var page_completed = document.querySelector("#pills-completed-tab");
     var todo_content = document.querySelector("#todo_content");
     var allToDo = {};
-    var progressToDo = {};
-    var completedToDo = {};
+    var progressToDo = [];
+    var completedToDo = [];
     var nowPage = "all";
     var todoLen = {
         all: 0,
         progress: 0,
         completed: 0
     };
+    var dataSort = {};
+    var allToDo_sort = [];
 
     // Initialize Firebase
     var config = {
@@ -36,11 +38,25 @@ var get_start = (function () {
                 _filterToDo();
             }
         });
+        db.ref('/mysort').on('value', function (snapshot) {
+            var data = snapshot.val();
+            if (data) {
+                // console.log(data);
+                dataSort = data;
+                _filterToDo();
+            }
+        });
     }
 
     function _eventBind() {
         newToDo.addEventListener("keydown", _addNewTodo);
         todo_content.addEventListener("click", _checkForAction);
+        // 拖曳事件結束後觸發_saveDataSort
+        var sortable = new Sortable(todo_content, {
+            onEnd: function () {
+                _saveDataSort();
+            },
+        });
         Sortable.create(todo_content, {
             handle: '.my-handle',
             ghostClass: 'ghost'
@@ -88,22 +104,38 @@ var get_start = (function () {
 
     // 此函數在資料更新時,負責data的分類,讓後續router不用再過濾要渲染的data
     function _filterToDo() {
-        progressToDo = {},
-            completedToDo = {};
+        progressToDo = [];
+        completedToDo = [];
         todoLen = {
             all: 0,
             progress: 0,
             completed: 0
         };
-        for (let key in allToDo) {
-            if (allToDo[key].done === "no") {
-                progressToDo[key] = allToDo[key];
+        var tmp = [];
+        var tmp_len = 0;
+        // 因為for in順序的不確定性
+        // 所以先取得所有筆數後，再將key依序存入tmp
+        for (let key in dataSort) {
+            tmp_len++;
+        }
+        for (let i = 0; i < tmp_len; i++) {
+            tmp.push(dataSort[i]);
+        }
+        // 依照key的順序來取出對應allToDo中的資料
+        // 此處先過濾已完成與未完成
+        for (let i = 0; i < tmp.length; i++) {
+            if (allToDo[tmp[i]].done === "no") {
+                allToDo[tmp[i]].key = tmp[i];
+                progressToDo.push(allToDo[tmp[i]]);
                 todoLen.progress++;
-            } else if (allToDo[key].done === "yes") {
-                completedToDo[key] = allToDo[key];
+            } else if (allToDo[tmp[i]].done === "yes") {
+                allToDo[tmp[i]].key = tmp[i];
+                completedToDo.push(allToDo[tmp[i]]);
                 todoLen.completed++;
             }
         }
+        // 因為已完成/未完成已經排序好，所以all只要將兩陣列相加即可
+        allToDo_sort = progressToDo.concat(completedToDo);
         todoLen.all = todoLen.progress + todoLen.completed;
         _updatePage();
     }
@@ -111,7 +143,7 @@ var get_start = (function () {
     // 此函數負責router,將當前頁面需要渲染的data傳給_createPageStr()
     function _updatePage() {
         if (nowPage === "all") {
-            _createPageStr(allToDo);
+            _createPageStr(allToDo_sort);
         } else if (nowPage === "progress") {
             _createPageStr(progressToDo);
         } else if (nowPage === "completed") {
@@ -122,41 +154,41 @@ var get_start = (function () {
     // 將得到的data渲染到頁面
     function _createPageStr(data) {
         var str = "";
-        for (let key in data) {
+        for (let i = 0; i < data.length; i++) {
             str += `
                 <div class="mb-2">
-                    <div class="all-content p-md-3 py-3 px-1 ${_checkStarOuter(data[key].star)}">
+                    <div class="all-content p-md-3 py-3 px-1 ${_checkStarOuter(data[i].star)}">
                         <div class="row">
                             <div class="col-lg-1 col-2 d-flex justify-content-start">
-                                <span class="my-handle">☰</span>
+                                <span class="my-handle" data-key="${data[i].key}">☰</span>
                                 <label class="my-checkbox">
-                                    <input type="checkbox" data-key="${key}" class="${_checkDoneClass(data[key].done)}" ${_checkDone(data[key].done)}>
+                                    <input type="checkbox" data-key="${data[i].key}" class="${_checkDoneClass(data[i].done)}" ${_checkDone(data[i].done)}>
                                     <span class="checkmark"></span>
                                 </label>
                             </div>
-                            <div class="col-lg-9 col-7 " data-toggle="collapse" data-target="#${key}" aria-expanded="false" style="cursor: pointer">
-                                <div class="text-truncate ${_checkDelText(data[key].done)}">${data[key].content || ""}</div>
+                            <div class="col-lg-9 col-7 " data-toggle="collapse" data-target="#${data[i].key}" aria-expanded="false" style="cursor: pointer">
+                                <div class="text-truncate ${_checkDelText(data[i].done)}">${data[i].content || ""}</div>
                             </div>
                             <div class="col-lg-2 col-3">
                                 <div class="edit-icon">
-                                    <i class="${_checkStarIcon(data[key].star)} fa-star mr-3" data-key="${key}"></i>
-                                    <i class="fas fa-pencil-alt mr-lg-3" data-toggle="collapse" data-target="#${key}" aria-expanded="false"></i>
-                                    <i class="fas fa-trash d-none d-lg-inline-block" data-key="${key}"></i>
+                                    <i class="${_checkStarIcon(data[i].star)} fa-star mr-3" data-key="${data[i].key}"></i>
+                                    <i class="fas fa-pencil-alt mr-lg-3" data-toggle="collapse" data-target="#${data[i].key}" aria-expanded="false"></i>
+                                    <i class="fas fa-trash d-none d-lg-inline-block" data-key="${data[i].key}"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="row quick-icon mt-2 ml-4">
-                            <div class="col-10" data-toggle="collapse" data-target="#${key}" aria-expanded="false">
-                                ${_checkDeadDate(data[key].dead_date)}
+                            <div class="col-10" data-toggle="collapse" data-target="#${data[i].key}" aria-expanded="false">
+                                ${_checkDeadDate(data[i].dead_date)}
                                 <i class="far fa-file mr-2"></i>
-                                ${_checkComment(data[key].comment)}
+                                ${_checkComment(data[i].comment)}
                             </div>
                             <div class="col-2">
-                                <i class="fas fa-trash d-inline-block d-lg-none" data-key="${key}"></i>
+                                <i class="fas fa-trash d-inline-block d-lg-none" data-key="${data[i].key}"></i>
                             </div>
                         </div>
                     </div>
-                    <div class="collapse mb-3" id="${key}">
+                    <div class="collapse mb-3" id="${data[i].key}">
                         <div class="px-4 py-3" style="border: 0;border-top: 2px solid #C8C8C8;background: #F2F2F2;">
                             <form>
                                 <div class="form-group">
@@ -165,7 +197,7 @@ var get_start = (function () {
                                         Title
                                     </div>
                                     <div class="mx-4">
-                                        <textarea class="form-control" rows="3">${data[key].content || ""}</textarea>
+                                        <textarea class="form-control" rows="3">${data[i].content || ""}</textarea>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -175,10 +207,10 @@ var get_start = (function () {
                                     </div>
                                     <div class="row mx-4">
                                         <div class="col-md-6 pl-md-0 mb-md-0 mb-3">
-                                            <input type="date" class="form-control d-none" value="${data[key].dead_date || ''}">
+                                            <input type="date" class="form-control d-none" value="${data[i].dead_date || ''}">
                                         </div>
                                         <div class="col-md-6 pr-md-0">
-                                            <input type="time" class="form-control" value="${data[key].dead_time || ''}" pattern="[0-9]{2}:[0-9]{2}">
+                                            <input type="time" class="form-control" value="${data[i].dead_time || ''}" pattern="[0-9]{2}:[0-9]{2}">
                                         </div>
                                     </div>
                                 </div>
@@ -197,7 +229,7 @@ var get_start = (function () {
                                         Comment
                                     </div>
                                     <div class="mx-4">
-                                        <textarea class="form-control" rows="3">${data[key].comment || ""}</textarea>
+                                        <textarea class="form-control" rows="3">${data[i].comment || ""}</textarea>
                                     </div>
                                 </div>
                             </form>
@@ -207,7 +239,7 @@ var get_start = (function () {
                                 <i class="fas fa-times mr-1"></i>
                                 Cancel
                             </button>
-                            <button type="button" class="collapse-add btn btn-block m-0" data-key=${key}>
+                            <button type="button" class="collapse-add btn btn-block m-0" data-key=${data[i].key}>
                                 <i class="fas fa-plus mr-1"></i>
                                 Add Task
                             </button>
@@ -240,11 +272,24 @@ var get_start = (function () {
         }
     }
 
+    function _saveDataSort() {
+        var allKey = [];
+        var tmp = {};
+        $(".my-handle").each(function () {
+            var $key = $(this)[0].dataset.key;
+            allKey.push($key);
+        });
+        for (var i = 0; i < allKey.length; i++) {
+            tmp[i] = allKey[i];
+        }
+        db.ref("/mysort").set(tmp);
+    }
+
     function _checkForAction(e) {
         if (e.target.nodeName === "BUTTON") {
             if ($(e.target).hasClass("collapse-cancel")) {
                 Ply.dialog("confirm", {
-                    effect: ["slide", "scale"]
+                        effect: ["slide", "scale"]
                     }, {
                         text: "確定要取消編輯嗎?",
                         ok: "Yes",
@@ -269,7 +314,7 @@ var get_start = (function () {
                 //     console.log($("#" + $key + " form")[0][i].value);
                 // }
                 Ply.dialog("confirm", {
-                    effect: ["fall", "scale"]
+                        effect: ["fall", "scale"]
                     }, {
                         text: "確定要保存更改嗎?",
                         ok: "Save",
@@ -297,12 +342,28 @@ var get_start = (function () {
                     if (todoLen.all == 0) {
                         // console.log("zero")
                         allToDo = {},
-                            progressToDo = {},
-                            completedToDo = {};
+                            allToDo_sort = [],
+                            progressToDo = [],
+                            completedToDo = [];
                         todo_content.innerHTML = "";
                     }
                     // console.log(todoLen.all);
                     db.ref("/todo/" + $(e.target)[0].dataset.key).remove();
+                    // 刪除mysort中對應的key
+                    var allKey = [];
+                    var tmp = {};
+                    for(let key in dataSort){
+                        if (dataSort[key] != $(e.target)[0].dataset.key){
+                            allKey.push(dataSort[key]);
+                        }
+                    }
+                    for (var i = 0; i < allKey.length; i++) {
+                        tmp[i] = allKey[i];
+                    }
+                    // 將對應的資料移除
+                    db.ref("/mysort" + $(e.target)[0].dataset.key).remove();
+                    // 刪除排序中對應的key
+                    db.ref("/mysort").set(tmp);
                 }
             } else if ($(e.target).hasClass("fa-star")) {
                 // star功能
