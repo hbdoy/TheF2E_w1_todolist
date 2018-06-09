@@ -111,6 +111,7 @@ var get_start = (function () {
         };
         var tmp = [];
         var tmp_len = 0;
+        var allData_len = 0;
         // 因為for in順序的不確定性
         // 所以先取得所有筆數後，再將key依序存入tmp
         for (let key in dataSort) {
@@ -119,9 +120,16 @@ var get_start = (function () {
         for (let i = 0; i < tmp_len; i++) {
             tmp.push(dataSort[i]);
         }
+        // 因為新增的todo還沒存入排序,所以手動加入到最前面顯示
+        for (let key in allToDo) {
+            if(tmp.indexOf(key) == -1){
+                tmp.unshift(key);
+            }
+            allData_len++;
+        }
         // 依照key的順序來取出對應allToDo中的資料
         // 此處先過濾已完成與未完成
-        for (let i = 0; i < tmp.length; i++) {
+        for (let i = 0; i < allData_len; i++) {
             if (allToDo[tmp[i]].done === "no") {
                 allToDo[tmp[i]].key = tmp[i];
                 progressToDo.push(allToDo[tmp[i]]);
