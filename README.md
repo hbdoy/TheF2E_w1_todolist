@@ -78,6 +78,7 @@ Sortable.create(todo_content, {
 ```
 
 ------
+切版算基本功，就不寫心得了XD
 
 收穫之一大概就是不會糾結於某個library，原本想用``Jquery UI``弄draggable，但自訂性不是很好，主要想弄成畫面中左側點點才能拖拉，而不是整個欄位都可以拉，
 
